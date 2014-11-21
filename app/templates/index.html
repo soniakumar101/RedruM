@@ -3,11 +3,13 @@
         <title>Flask-SocketIO-Chat</title>
     </head>
     <body>
-        <h1>Flask-SocketIO-Chat</h1>
+        <h1>MAFIA GAME PLAY</h1>
         <form method="POST">
             {{ form.hidden_tag() }}
             {{ form.name.label }}: {{ form.name() }} {% for error in form.name.errors %}{{ error }}{% endfor %}<br>
             {{ form.room.label }}: {{ form.room() }} {% for error in form.room.errors %}{{ error }}{% endfor %}<br>
+            {{ form.room2.label }}: {{ form.room2() }} {% for error in form.room2.errors %}{{ error }}{% endfor %}<br>
+            {{ form.mafia.label }}: {{ form.mafia() }} {% for error in form.mafia.errors %}{{ error }}{% endfor %}<br>
             {{ form.submit() }}
         </form>
     </body>

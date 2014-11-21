@@ -3,20 +3,38 @@
         <title>Flask-SocketIO-Chat: {{ room }}</title>
         <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="../static/style.css"> 
+
         <script type="text/javascript" charset="utf-8">
+ 
+
             var socket;
+            
             $(document).ready(function(){
                 socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
                 socket.on('connect', function() {
                     socket.emit('joined', {});
+                    socket.emit('joinedsecondroom', {});
                 });
                 socket.on('status', function(data) {
                     $('#chat').val($('#chat').val() + '<' + data.msg + '>\n');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
+                    console.log('status1')
                 });
+                socket.on('status2', function(data) {
+                    $('#chat2').val($('#chat2').val() + '<' + data.msg + '>\n');
+                    $('#chat2').scrollTop($('#chat2')[0].scrollHeight);
+                    console.log('status2')
+                });
+
                 socket.on('message', function(data) {
                     $('#chat').val($('#chat').val() + data.msg + '\n');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
+                });
+
+                socket.on('message2', function(data) {
+                    $('#chat2').val($('#chat2').val() + data.msg + '\n');
+                    $('#chat2').scrollTop($('#chat2')[0].scrollHeight);
                 });
                 $('#text').keypress(function(e) {
                     var code = e.keyCode || e.which;
@@ -26,13 +44,34 @@
                         socket.emit('text', {msg: text});
                     }
                 });
+                  $('#text2').keypress(function(e) {
+                    var code = e.keyCode || e.which;
+                    if (code == 13) {
+                        text2 = $('#text2').val();
+                        $('#text2').val('');
+                        socket.emit('text2', {msg: text2});
+                    }
+                });
             });
         </script>
     </head>
     <body>
-        <h1>Flask-SocketIO-Chat: {{ room }}</h1>
+        <div style="background-color:#990000">
+        <div>
+            Username List {{session}}
+        </div>
+        <h1>MAFIA GAME PLAY: {{ room }}</h1>
         <textarea id="chat" cols="80" rows="20"></textarea><br><br>
         <input id="text" size="80" placeholder="Enter your message here"><br><br>
         <a href="{{ url_for('main.index') }}" onclick="socket.emit('left', {});">Leave this room</a>
+    </div>
+    {% if session['mafia'] == "yes" %}
+    <div>
+        <h1>MAFIA GAME PLAY: {{ room2 }}</h1>
+        <textarea id="chat2" cols="80" rows="20"></textarea><br><br>
+        <input id="text2" size="80" placeholder="Enter your message here"><br><br>
+        <a href="{{ url_for('main.index') }}" onclick="socket.emit('left', {});">Leave this room</a>
+    </div>
+    {% endif %}
     </body>
 </html>
