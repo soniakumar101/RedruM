@@ -8,5 +8,6 @@ class LoginForm(Form):
     room = StringField('Room', validators=[Required()])
     room2 = StringField('Room2', validators=[Required()])
     mafia = StringField('Mafia', validators=[Required()])
+    narrator = StringField('Narrator', validators=[Required()])
     #not_mafia = StringField('Not Mafia', validators=[Required()])
     submit = SubmitField('Enter Chatroom')

@@ -58,20 +58,157 @@
     <body>
         <div style="background-color:#990000">
         <div>
-            Username List {{session}}
-        </div>
-        <h1>MAFIA GAME PLAY: {{ room }}</h1>
-        <textarea id="chat" cols="80" rows="20"></textarea><br><br>
-        <input id="text" size="80" placeholder="Enter your message here"><br><br>
+        <h1>REDRUM GAME PLAY: {{ room }}</h1>
+        <h2>Welcome to Redrum! Goodluck!!</h2>
+        <textarea id="chat" cols="80" rows="20" style="background-color:black;color:white;"></textarea> <br><br>
+        <input id="text" size="80" placeholder="Enter your message here" style="background-color:black;color:white;"><br><br>
         <a href="{{ url_for('main.index') }}" onclick="socket.emit('left', {});">Leave this room</a>
     </div>
-    {% if session['mafia'] == "yes" %}
     <div>
-        <h1>MAFIA GAME PLAY: {{ room2 }}</h1>
-        <textarea id="chat2" cols="80" rows="20"></textarea><br><br>
-        <input id="text2" size="80" placeholder="Enter your message here"><br><br>
-        <a href="{{ url_for('main.index') }}" onclick="socket.emit('left', {});">Leave this room</a>
+     {% for user in session['users'] %}
+       {% if session['users'][user][2] %}
+        <label class="checkbox-inline" id="{{session['users'][user][0]}} label">
+            <input type="checkbox" style="visibility:hidden" id="{{session['users'][user][0]}}" value="{{session['users'][user][0]}}" name="{{session['users'][user][0]}}"> {{session['users'][user][0]}}
+            </label>
+        {% endif %}
+        {% endfor %}
+</div>
+    {% if session['narrator'] == "yes" %}
+    <div>
+    <form action="action_page.php" id= "guessingkillers">
+    <fieldset>
+    <legend>Choose Who the Killers Are:</legend>
+    Killer 1:<br>
+    <input type="text" name="Username" value=" " id= "killer1">
+    <br>
+    Killer 2:<br>
+    <input type="text" name="Username" value=" " id= "killer2">
+    <br><br>
+    <input type="submit" value="Submit"><br><br>
+    <div id="killerinfobox">
+    </div></fieldset>
+    </form>
     </div>
     {% endif %}
+<div>
+   <form action="http://www.html.am/html-codes/textboxes/submitted.cfm"> 
+    <textarea id="reminder" name="myTextBox" cols="50" rows="5" style="background-color:black;color:white;border:5px double #AD8C08;visibility:hidden;">
+    Innocent! Quickly! Who are the killers?
+    </textarea>
+    <br/>
+    </form>
+</div></fieldset>
+<div>
+    <form action="http://www.html.am/html-codes/textboxes/submitted.cfm">
+    <textarea id="reminderkiller" name="myTextBox" cols="50" rows="5" style="background-color:black;color:red;border:5px double #AD8C08;">
+    Killers! Quickly! Choose your next victim!
+    </textarea>
+    <br/>
+    </form>
+</div>
+    {% if session['mafia'] == "yes" %}
+    <div>
+        <h1>REDRUM KILLER GAME PLAY: {{ room2 }}</h1>
+        <textarea id="chat2" cols="80" rows="20" style="background-color:black;color:red;"></textarea><br><br>
+        <input id="text2" size="80" placeholder="Enter your message here" style="background-color:black;color:red;"><br><br>
+        <a href="{{ url_for('main.index') }}" onclick="socket.emit('left', {});">Leave this room</a>
+    </div>
+    <form class="form-inline" role="form" action="/chat" id="peopletokill">
+        <div>
+       {% for user in session['users'] %}
+       {% if session['users'][user][2]  != "killer" %}
+        <label class="checkbox-inline" id="{{session['users'][user][0]}} label">
+            <input type="checkbox" id="{{session['users'][user][0]}}" value="{{session['users'][user][0]}}" name="{{session['users'][user][0]}}"> {{session['users'][user][0]}}
+            </label>
+        {% endif %}
+        {% endfor %}
+       <!--  <label class="checkbox-inline">
+            <input type="checkbox" id="inlineCheckbox2" value="user2" name="user2"> User 2
+        </label>
+        <label class="checkbox-inline">
+            <input type="checkbox" id="inlineCheckbox3" value="user3" name="user3"> User 3
+        </label>
+        <label class="checkbox-inline">
+            <input type="checkbox" id="inlineCheckbox4" value="user4" name="user4"> User 4
+            </label>
+        <label class="checkbox-inline">
+            <input type="checkbox" id="inlineCheckbox5" value="user5" name="user5"> User 5
+        </label>
+        <label class="checkbox-inline">
+            <input type="checkbox" id="inlineCheckbox6" value="user6" name="user6"> User 6
+        </label>
+        <label class="checkbox-inline">
+            <input type="checkbox" id="inlineCheckbox7" value="user7" name="user7"> User 7
+        </label>
+        <label class="checkbox-inline">
+            <input type="checkbox" id="inlineCheckbox8" value="user8" name="user8"> User 8
+        </label>
+        <label class="checkbox-inline">
+            <input type="checkbox" id="inlineCheckbox9" value="user9" name="user9"> User 9
+        </label>
+        <label class="checkbox-inline">
+            <input type="checkbox" id="inlineCheckbox10" value="user10" name="user10"> User 10
+        </label> -->
+        <button type="submit" class="btn btn-default" id="filtersubmit">Submit</button> 
+    </form>
+</div>
+    {% endif %} 
+    <script>
+    $(document).ready(function(){
+        $("#peopletokill").submit(killPeople);
+        $("#guessingkillers").submit(guessKillers);
+    })
+    function killPeople(e) {
+        e.preventDefault();
+        console.log('killPeople');
+    var selected = [];
+  $("input:checked").each(function() {
+    id = $(this).attr('id')
+    label_id = id + ' label'
+    console.log($(this).attr('id'));
+    document.getElementById(id).setAttribute("style", "visibility: hidden");
+    document.getElementById(label_id).style.textDecoration= "line-through";
+
+$("#filtersubmit").attr('disabled', true) ;
+$("#reminder").attr("style", "background-color:black;color:white;border:5px double #AD8C08;visibility: visible") ;
+$("#reminderkiller").attr("style", "background-color:black;color:red;border:5px double #AD8C08;visibility: hidden");
+    setTimeout(function (){
+        $("#filtersubmit").attr('disabled', false);
+        $("#reminder").attr("style", "background-color:black;color:white;border:5px double red;visibility: hidden");
+        $("#reminderkiller").attr("style", "background-color:black;color:red;border:5px double #AD8C08;visibility: visible");
+   },20000);
+// $("#reminder").attr('disabled', true) ;
+//     setTimeout(function (){
+//         $("#reminder").attr('disabled', false);
+//    },5000);
+    /*selected.push($(this).attr('id'));
+    console.log(selected);
+  });
+for (i=0; i < selected.length; i++){
+    console.log(i);
+    /*document.getElementById(selected[0:4]).setAttribute("style", "visibility: hidden"); */
+  })
+}
+    function guessKillers(e) {
+        e.preventDefault();
+        var killers = [$("#killer1").val(), $("#killer2").val()]
+        console.log(killers);
+        // var killer2 = [$("#killer2").val()]
+
+        if (($.inArray("Black Mamba", killers) > -1) && ($.inArray("Ape Attack", killers) >-1)) {
+            $("#killerinfobox").html("YAY!!!! The INNOCENT WIN")
+        }
+        else if (($.inArray("Black Mamba", killers) == -1) && ($.inArray("Ape Attack", killers) == -1)){
+            $("#killerinfobox").html("Guess Again!")
+        }
+        else {
+            $("#killerinfobox").html("You have one killer name right! Guess the right combination.")
+        }
+
+
+
+    }
+   /*console.log(session['users'][user][0]);*/
+    </script>   
     </body>
 </html>
