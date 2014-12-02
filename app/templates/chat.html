@@ -27,21 +27,34 @@
                     console.log('status2')
                 });
 
-                socket.on('message', function(data) {
+                socket.on('someonesaid', function(data) {
                     $('#chat').val($('#chat').val() + data.msg + '\n');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
                 });
 
-                socket.on('message2', function(data) {
+                socket.on('someonesaid2', function(data) {
                     $('#chat2').val($('#chat2').val() + data.msg + '\n');
                     $('#chat2').scrollTop($('#chat2')[0].scrollHeight);
                 });
+                socket.on('eliminated', function(data) {
+                    $("#filtersubmit").attr('disabled', true) ;
+                    $("#reminder").attr("style", "background-color:black;color:white;border:5px double #AD8C08;visibility: visible") ;
+                    $("#reminderkiller").attr("style", "background-color:black;color:red;border:5px double #AD8C08;visibility: hidden");
+                    document.getElementById(data.msg +' label').style.textDecoration= "line-through";
+                     setTimeout(function (){
+                        // it's killer time!
+                        $("#filtersubmit").attr('disabled', false);
+                        $("#reminder").attr("style", "background-color:black;color:white;border:5px double red;visibility: hidden");
+                        $("#reminderkiller").attr("style", "background-color:black;color:red;border:5px double #AD8C08;visibility: visible");
+                        },20000);
+                });
+
                 $('#text').keypress(function(e) {
                     var code = e.keyCode || e.which;
                     if (code == 13) {
                         text = $('#text').val();
                         $('#text').val('');
-                        socket.emit('text', {msg: text});
+                        socket.emit('userinput', {msg: text});
                     }
                 });
                   $('#text2').keypress(function(e) {
@@ -49,7 +62,7 @@
                     if (code == 13) {
                         text2 = $('#text2').val();
                         $('#text2').val('');
-                        socket.emit('text2', {msg: text2});
+                        socket.emit('userinput2', {msg: text2});
                     }
                 });
             });
@@ -122,33 +135,6 @@
             </label>
         {% endif %}
         {% endfor %}
-       <!--  <label class="checkbox-inline">
-            <input type="checkbox" id="inlineCheckbox2" value="user2" name="user2"> User 2
-        </label>
-        <label class="checkbox-inline">
-            <input type="checkbox" id="inlineCheckbox3" value="user3" name="user3"> User 3
-        </label>
-        <label class="checkbox-inline">
-            <input type="checkbox" id="inlineCheckbox4" value="user4" name="user4"> User 4
-            </label>
-        <label class="checkbox-inline">
-            <input type="checkbox" id="inlineCheckbox5" value="user5" name="user5"> User 5
-        </label>
-        <label class="checkbox-inline">
-            <input type="checkbox" id="inlineCheckbox6" value="user6" name="user6"> User 6
-        </label>
-        <label class="checkbox-inline">
-            <input type="checkbox" id="inlineCheckbox7" value="user7" name="user7"> User 7
-        </label>
-        <label class="checkbox-inline">
-            <input type="checkbox" id="inlineCheckbox8" value="user8" name="user8"> User 8
-        </label>
-        <label class="checkbox-inline">
-            <input type="checkbox" id="inlineCheckbox9" value="user9" name="user9"> User 9
-        </label>
-        <label class="checkbox-inline">
-            <input type="checkbox" id="inlineCheckbox10" value="user10" name="user10"> User 10
-        </label> -->
         <button type="submit" class="btn btn-default" id="filtersubmit">Submit</button> 
     </form>
 </div>
@@ -166,27 +152,7 @@
     id = $(this).attr('id')
     label_id = id + ' label'
     console.log($(this).attr('id'));
-    document.getElementById(id).setAttribute("style", "visibility: hidden");
-    document.getElementById(label_id).style.textDecoration= "line-through";
-
-$("#filtersubmit").attr('disabled', true) ;
-$("#reminder").attr("style", "background-color:black;color:white;border:5px double #AD8C08;visibility: visible") ;
-$("#reminderkiller").attr("style", "background-color:black;color:red;border:5px double #AD8C08;visibility: hidden");
-    setTimeout(function (){
-        $("#filtersubmit").attr('disabled', false);
-        $("#reminder").attr("style", "background-color:black;color:white;border:5px double red;visibility: hidden");
-        $("#reminderkiller").attr("style", "background-color:black;color:red;border:5px double #AD8C08;visibility: visible");
-   },20000);
-// $("#reminder").attr('disabled', true) ;
-//     setTimeout(function (){
-//         $("#reminder").attr('disabled', false);
-//    },5000);
-    /*selected.push($(this).attr('id'));
-    console.log(selected);
-  });
-for (i=0; i < selected.length; i++){
-    console.log(i);
-    /*document.getElementById(selected[0:4]).setAttribute("style", "visibility: hidden"); */
+    socket.emit ('choosevictim', {victim: id});
   })
 }
     function guessKillers(e) {
@@ -204,11 +170,7 @@ for (i=0; i < selected.length; i++){
         else {
             $("#killerinfobox").html("You have one killer name right! Guess the right combination.")
         }
-
-
-
     }
-   /*console.log(session['users'][user][0]);*/
     </script>   
     </body>
 </html>

@@ -1,7 +1,6 @@
 from flask import session
 from flask.ext.socketio import emit, join_room, leave_room
 from .. import socketio
-import threading
 
 @socketio.on('joined', namespace='/chat')
 def joined(message):
@@ -19,27 +18,26 @@ def joinedsecondroom(message):
     print "session2", session
     emit('status2', {'msg': session.get('name') + ' has entered the room.'}, room=room2)
 
-@socketio.on('text', namespace='/chat')
+@socketio.on('userinput', namespace='/chat')
 def left(message):
     """Sent by a client when the user entered a new message.
     The message is sent to all people in the room."""
     room = session.get('room')
-    emit('message', {'msg': session.get('name') + ':' + message['msg']}, room=room)
+    emit('someonesaid', {'msg': session.get('name') + ':' + message['msg']}, room=room)
 
 
-@socketio.on('text2', namespace='/chat')
+@socketio.on('userinput2', namespace='/chat')
 def left(message):
     """Sent by a client when the user entered a new message.
     The message is sent to all people in the room."""
     room2 = session.get('room2')
-    emit('message2', {'msg': session.get('name') + ':' + message['msg']}, room=room2)
+    emit('someonesaid2', {'msg': session.get('name') + ':' + message['msg']}, room=room2)
 
-# @socketio.on('reminderKiller', namespace='/chat')
-# def left(message):
-#     """Sent by a client when the user entered a new message.
-#     The message is sent to all people in the room."""
-#     room = session.get('room')
-#     emit('message3', {'msg': session.get('name') + ':' + message['msg']}, room=room2)
+@socketio.on('choosevictim', namespace='/chat')
+def choosevictim(data):
+    room = session.get('room')
+    emit('status', {'msg': data['victim'] + ' has been eliminated'}, room=room)
+    emit('eliminated', {'msg': data['victim']}, room=room)
 
 
 
