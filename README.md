@@ -1,6 +1,6 @@
-Flask-SocketIO-Chat
-===================
+soniakumar101.github.io/RedruM
+Github deployment of Redrum chat
 
-A simple chat application that demonstrates how to structure a Flask-SocketIO application.
+My project is an online game which uses a Python Flask back-end with websockets to create multiple chat rooms in which to play. This project uses both front-end and back-end code to ensure full user experience and allow users to communicate with each other in real-time to decide the course of the game. General Rules: 1.) You need to have at least 8 or more players. There will be two Killers, one Cop, and the rest will be the Prey 2.) The game is divided into two phases: the phase where the Killers are allowed to kill one victim at a time and the phase where the Prey can talk to each other and the Cop. The Cop cannot be killed and everyone will know who the Cop is throughout the game. 3.) During the phase where the Killers can choose a victim they can talk amongst themselves to strategically decide which members to kill off. During the phase where the Prey can guess, everyone can talk to each other to figure out who the Killers are, while the Killers can lie and throw suspicion off of them. 4.)The Cop is the sole character who can enter in guesses for who the Killers are after everyone agrees on who to vote for. 5.) The game continues until either the Killers are discovered or enough of the Prey have been killed off and the Killers are the majority.
 
-To run this application install the requirements in a virtual environment, run `python chat.py` and visit `http://localhost:5000` on one or more browser tabs.
+Technologies Used: Python, Flask, Javascript, HTML, JQuery, SocketIO, CSS, Jinja
